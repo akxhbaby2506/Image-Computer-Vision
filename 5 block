@@ -1,0 +1,56 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Read the image
+image = cv2.imread('saad.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Choose a random sub-image
+np.random.seed(42) # for reproducibility
+start_row = np.random.randint(0, image.shape[0] - 50)
+start_col = np.random.randint(0, image.shape[1] - 50)
+sub_image = image[start_row:start_row + 50, start_col:start_col + 50]
+
+# Display the original and sub-image
+plt.subplot(2, 3, 1)
+plt.imshow(image, cmap='gray')
+plt.title('Original Image')
+plt.axis('off')
+
+plt.subplot(2, 3, 2)
+plt.imshow(sub_image, cmap='gray')
+plt.title('Random Sub-Image')
+plt.axis('off')
+
+# Morphological operations
+kernel = np.ones((5, 5), np.uint8)
+
+# 1. Erosion
+erosion = cv2.erode(sub_image, kernel, iterations=1)
+plt.subplot(2, 3, 3)
+plt.imshow(erosion, cmap='gray')
+plt.title('Erosion')
+plt.axis('off')
+
+# 2. Dilation
+dilation = cv2.dilate(sub_image, kernel, iterations=1)
+plt.subplot(2, 3, 4)
+plt.imshow(dilation, cmap='gray')
+plt.title('Dilation')
+plt.axis('off')
+# 3. Opening
+opening = cv2.morphologyEx(sub_image, cv2.MORPH_OPEN, kernel)
+plt.subplot(2, 3, 5)
+plt.imshow(opening, cmap='gray')
+plt.title('Opening')
+plt.axis('off')
+
+# 4. Closing
+closing = cv2.morphologyEx(sub_image, cv2.MORPH_CLOSE, kernel)
+plt.subplot(2, 3, 6)
+plt.imshow(closing, cmap='gray')
+plt.title('Closing')
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
