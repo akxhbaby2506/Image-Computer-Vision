@@ -1,0 +1,64 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Read the image
+image = cv2.imread('saad.jpg')
+
+# Display the original image
+plt.figure(figsize=(10, 10))
+plt.subplot(2, 3, 1)
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title('Original Image')
+plt.axis('off')
+
+# Define a pixel of interest (row, column)
+pixel_row = 100
+pixel_col = 150
+selected_pixel = image[pixel_row, pixel_col]
+
+# Color transformations
+transformed_images = []
+
+# 1. Grayscale
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+transformed_images.append(('Grayscale', cv2.cvtColor(gray_image, cv2.COLOR_GRAY2BGR)))
+
+# 2. Invert colors
+invert_image = cv2.bitwise_not(image)
+transformed_images.append(('Invert Colors', invert_image))
+
+# 3. Sepia
+sepia_matrix = np.array([[0.393, 0.769, 0.189], [0.349, 0.686, 0.168], [0.272, 0.534, 0.131]])
+sepia_image = cv2.transform(image, sepia_matrix.T)
+transformed_images.append(('Sepia', sepia_image.astype(np.uint8)))
+
+# 4. Brightness adjustment
+brightness_factor = 1.5
+brightness_image = cv2.convertScaleAbs(image, alpha=brightness_factor, beta=0)
+transformed_images.append(('Brightness', brightness_image))
+
+# 5. Saturation adjustment
+saturation_factor = 1.5
+hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+hsv_image[:, :, 1] = hsv_image[:, :, 1] * saturation_factor
+saturation_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
+transformed_images.append(('Saturation', saturation_image))
+
+# Display the transformed images
+for i, (transformation, transformed_image) in enumerate(transformed_images, start=2):
+  plt.subplot(2, 3, i)
+  plt.imshow(cv2.cvtColor(transformed_image, cv2.COLOR_BGR2RGB))
+  plt.title(transformation)
+  plt.axis('off')
+
+# Display the original pixel value and the transformed pixel values
+print(f"Original Pixel Value: {selected_pixel}")
+
+for transformation, transformed_image in transformed_images:
+  transformed_pixel = transformed_image[pixel_row, pixel_col]
+  print(f"{transformation} Transformed Pixel Value:{transformed_pixel}")
+
+# Show the plot
+plt.tight_layout()
+plt.show()
