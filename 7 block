@@ -1,0 +1,69 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Read the image
+image = cv2.imread('saad.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Choose a random 5x5 sub-image
+np.random.seed(42)
+start_row = np.random.randint(0, image.shape[0] - 5)
+start_col = np.random.randint(0, image.shape[1] - 5)
+sub_image = image[start_row:start_row + 5, start_col:start_col + 5]
+
+# Define a simple 3x3 filter for manual convolution
+filter_kernel = np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]])
+
+# Perform manual convolution
+conv_result = np.zeros_like(sub_image)
+
+for i in range(1, sub_image.shape[0] - 1):
+  for j in range(1, sub_image.shape[1] - 1):
+    conv_result[i, j] = np.sum(sub_image[i-1:i+2, j-1:j+2] * filter_kernel)
+
+# Display the original, filter, and result images for manual convolution
+plt.subplot(2, 3, 1)
+plt.imshow(sub_image, cmap='gray')
+plt.title('Original 5x5 Sub-Image')
+plt.axis('off')
+
+plt.subplot(2, 3, 2)
+plt.imshow(filter_kernel, cmap='gray')
+plt.title('3x3 Filter Kernel')
+plt.axis('off')
+
+plt.subplot(2, 3, 3)
+plt.imshow(conv_result, cmap='gray')
+plt.title('Filtered Image (Manual Convolution)')
+plt.axis('off')
+
+# Define additional filters for OpenCV convolution
+kernel_identity = np.array([[0, 0, 0], [0, 1, 0], [0, 0, 0]])
+
+kernel_sharpen = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+
+kernel_edge_detection = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
+
+# Apply filters using OpenCV
+filtered_identity = cv2.filter2D(sub_image, -1, kernel_identity)
+filtered_sharpen = cv2.filter2D(sub_image, -1, kernel_sharpen)
+filtered_edge_detection = cv2.filter2D(sub_image, -1, kernel_edge_detection)
+
+# Display the original and filtered images using OpenCV
+plt.subplot(2, 3, 4)
+plt.imshow(filtered_identity, cmap='gray')
+plt.title('Identity Filter')
+plt.axis('off')
+
+plt.subplot(2, 3, 5)
+plt.imshow(filtered_sharpen, cmap='gray')
+plt.title('Sharpen Filter')
+plt.axis('off')
+
+plt.subplot(2, 3, 6)
+plt.imshow(filtered_edge_detection, cmap='gray')
+plt.title('Edge Detection Filter')
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
